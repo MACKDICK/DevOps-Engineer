@@ -1,0 +1,10 @@
+  Create a Redis cluster with 1 master and 3 slaves
+  The cluster should have the capability to promote slaves to master automatically in the event of master going down for whatever reason.
+  Once complete please create a cloudformation template to launch the entire infrastructure.
+  Automate the whole process using chef recipes.
+
+Outcome:
+Read me and code on github 
+Read me should explain how to run docker compose locally to bring up the environment 
+Read me on how to deploy the app to aws 
+Diagram of the architecture.
