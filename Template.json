@@ -1,0 +1,127 @@
+{
+  "TemplateDevOpsVersion": "2018-19-09",
+  "Description": "Test template for DevOps",
+  "Parameters": {
+    "KeyName": {
+      "Description": "DepOps",
+      "Type": "AWS::EC2::AnyKeyPair::DevOps",
+      "ConstraintDescription": "DevOps"
+    },
+    "InstanceType": {
+      "Description": "DevOps test Master-Slave Servers",
+      "Type": "String",
+      "Default": "t2.small",            
+      "ConstraintDescription": "DevOps Instance"
+    },
+    "SSHLocation": {
+      "Description": "DevOps test 192.168.1.1",
+      "Type": "String",
+      "MinLength": "9",
+      "MaxLength": "18",
+      "Default": "192.168.1.1/1",
+      "AllowedPattern": "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})",
+      "ConstraintDescription": "DevOps test 192.168.1.1/1"
+    }
+  },
+  "Mappings": {
+    "AWSInstanceType2Arch": {      
+      "t2.small": {
+        "Arch": "HVM64"
+      },    
+    "AWSInstanceType2NATArch": {      
+      "t2.small": {
+        "Arch": "NATHVM64"
+      },      
+    "AWSRegionArch2AMI": {      
+      "eu-central-1": {
+        "PV64": "ami-6527cf0a",
+        "HVM64": "ami-ea26ce85",
+        "HVMG2": "ami-81ac71ee"
+      },
+  "Resources": {
+    "EC2Instance": {
+      "Type": "AWS::EC2::Instance",
+      "Properties": {
+        "InstanceType": {
+          "Ref": "InstanceType"
+        },
+        "SecurityGroups": [
+          {
+            "Ref": "InstanceSecurityGroup"
+          }
+        ],
+        "KeyName": {
+          "Ref": "KeyName"
+        },
+        "ImageId": {
+          "Fn::FindInMap": [
+            "AWSRegionArch2AMI",
+            {
+              "Ref": "AWS::Region"
+            },
+            {
+              "Fn::FindInMap": [
+                "AWSInstanceType2Arch",
+                {
+                  "Ref": "InstanceType"
+                },
+                "Arch"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "InstanceSecurityGroup": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "Enable SSH access via port 22",
+        "SecurityGroupIngress": [
+          {
+            "IpProtocol": "tcp",
+            "FromPort": "22",
+            "ToPort": "22",
+            "CidrIp": {
+              "Ref": "SSHLocation"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "Outputs": {
+    "InstanceId": {
+      "Description": "InstanceId of the newly created EC2 instance",
+      "Value": {
+        "Ref": "EC2Instance"
+      }
+    },
+    "AZ": {
+      "Description": "Availability Zone of the newly created EC2 instance",
+      "Value": {
+        "Fn::GetAtt": [
+          "EC2Instance",
+          "AvailabilityZone"
+        ]
+      }
+    },
+    "PublicDNS": {
+      "Description": "Public DNSName of the newly created EC2 instance",
+      "Value": {
+        "Fn::GetAtt": [
+          "EC2Instance",
+          "PublicDnsName"
+        ]
+      }
+    },
+    "PublicIP": {
+      "Description": "Public IP address of the newly created EC2 instance",
+      "Value": {
+        "Fn::GetAtt": [
+          "EC2Instance",
+          "PublicIp"
+        ]
+      }
+    }
+  }
+}
