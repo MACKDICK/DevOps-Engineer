@@ -1,0 +1,9 @@
+mkdir ~/DevOps
+cd ~/DevOps
+docker pull mint:8
+docker run -it -v $(pwd):/root/chef-repo -p 8100:80 mint:8 /bin/bash
+apt-get update
+apt-get install curl -y
+curl https://omnitruck.chef.io/install.sh | bash -s -- -P chefdk -c stable -v 2.5.3
+
+
