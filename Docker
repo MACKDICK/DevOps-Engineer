@@ -4,3 +4,10 @@ ADD . /app
 EXPOSE 80
 ENV NAME RedisS
 CMD ["redis", "app.py"]
+docker build -t RedisImage
+ENV http_proxy localhost:6000
+ENV https_proxy localhost:6001
+ENV http_proxy localhost:6002
+ENV https_proxy localhost:6003
+docker run -p 4000:80 RedisImage
+docker run -d -p 4000:80 RedisImage
