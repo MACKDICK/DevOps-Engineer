@@ -1,0 +1,6 @@
+FROM redis
+WORKDIR /app
+ADD . /app
+EXPOSE 80
+ENV NAME RedisS
+CMD ["redis", "app.py"]
